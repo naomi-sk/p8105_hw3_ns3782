@@ -6,7 +6,16 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set(
+  fig.width = 15,       
+  fig.asp = 0.7,         
+  out.width = "100%",    
+  dpi = 300,
+  message = FALSE,
+  warning = FALSE
+)
+
 ```
 
 # Problem 1
@@ -112,43 +121,47 @@ Lastly, concerning outliers. The month of January shows comparatively more extre
 
 library(patchwork)
 library(ggridges)
+library(viridis)
 
-# Panel 1: tmax vs tmin as a line graph
+# Panel 1: tmax vs tmin as a hex plot
 
 p1_nyc_noaa_plot <- ny_noaa_clean %>%
-  group_by(date) %>%
-  summarise(avg_tmax = mean(tmax, na.rm = TRUE),
-            avg_tmin = mean(tmin, na.rm = TRUE)) %>%
-  ggplot(aes(x = date)) +
-  geom_line(aes(y = avg_tmax, color = "Maximum"), alpha = 0.7) +
-  geom_line(aes(y = avg_tmin, color = "Minimum"), alpha = 0.7) +
-  scale_color_manual(values = c("Maximum" = "red", "Minimum" = "blue")) +
-  labs(title = "Average Daily Maximum and Minimum Temperatures in New York City (1981-2010)", 
-       x = "Date", y = "Temperature (Celsius)", 
-       color = "Temperature Type") +
-  theme(legend.position = "bottom")
+  select(tmin, tmax) %>%
+  filter(!is.na(tmin) & !is.na(tmax)) %>%
+  ggplot(aes(x = tmax, y = tmin)) +
+  geom_hex(bins = 30, color = "white", linewidth = 0.1) +  
+  scale_fill_viridis_c(option = "mako", name = "count", direction = -1) + 
+  labs(title = "Maximum and Minimum Temperatures in New York City (1981-2010)", 
+       x = "Maximum temperature (Celsius)", y = "Minimum temperature (Celsius)") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(color = "gray90"),
+    panel.grid.minor = element_blank(),
+    legend.position = "right",
+    aspect.ratio = 0.8
+  ) 
 
 # Panel 2: Ridge plot of snowfall values greater than 0 and less than 100
 
 p2_nyc_noaa_plot <- ny_noaa_clean %>%
   filter(snow > 0, snow < 100) %>%
-  ggplot(aes(x = snow, y = factor(year), fill = factor(year))) +
-  geom_density_ridges(scale = 2, rel_min_height = 0.01) +
+  ggplot(aes(x = snow, y = factor(year))) +
+  geom_density_ridges(
+    scale = 3, 
+    bandwidth = 0.7, 
+    alpha = 0.8,
+    fill = "steelblue",
+    color = "darkblue"
+  ) +
+  scale_x_continuous(limits = c(0, 100), expand = c(0, 0)) +
   labs(title = "Distribution of Snowfall in New York City (1981-2010)", 
-       x = "Snowfall (mm)", y = "Year") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none")
+       x = "Snowfall (cm)", y = "Year")
 
 # Combine plots and adjust layout
 
-combined_plot <- p1_nyc_noaa_plot / p2_nyc_noaa_plot 
-
-print(combined_plot)
-
-
+p1_nyc_noaa_plot + p2_nyc_noaa_plot 
 
 ```
-
 
 
 # Problem 2
