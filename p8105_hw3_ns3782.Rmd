@@ -192,7 +192,7 @@ nhanes_cleaned <- nhanes_merged %>%
 
 # Check variable types
 
-str(nhanes_cleaned)
+str(nhanes_cleaned, list.len = 10)
 
 # Code variable classes
 
@@ -209,6 +209,45 @@ nhanes_cleaned <- nhanes_cleaned %>%
                        ordered = TRUE)
   )
 
+```
+
+## Data Cleaning Process
+
+
+As part of the initial data wrangling process for Problem 2, I imported two datasets containing relevant NHANES study information, including demographic information (nhanes_covar) and accelerometer datasets (nhanes_accel). I proceeded to clean variable names in both using the janitor function. Subsequently, I merged these datasets using a left join on the 'seqn' variable, as this represents the sequence number or unique identifier for each observation (participant) in NHANES. 
+The resulting dataset was filtered to include only participants aged 21 and older as specified, and rows with missing demographic data were removed. Finally, I recoded the 'sex' and 'education' variables as factors with appropriate labels, with 'education' set as an ordered factor. This process resulted in a clean, merged dataset ready for analysis, with properly formatted categorical variables for sex and education level.
+
+
+```{r problem_2_summary_viz}
+
+# Load necessary package
+
+library(knitr)
+
+# Create summary table
+
+education_sex_table <- nhanes_cleaned %>%
+  group_by(education, sex) %>%
+  summarise(count = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = sex, values_from = count) %>%
+  mutate(Total = male + female) %>%
+  rename(Male = male, Female = female) %>%
+  bind_rows(
+    summarise(., education = "Total", 
+              Male = sum(Male, na.rm = TRUE), 
+              Female = sum(Female, na.rm = TRUE), 
+              Total = sum(Total, na.rm = TRUE))
+  )
+
+
+
+# Display the table
+kable(education_sex_table, caption = "NHANES Accelerometer Study: Participant Count by Sex and Education Level")
 
 
 ```
+
+## NHANES Accelerometer Study: Participant Count by Sex and Education Level
+
+The table shows the distribution participants in the NHANES Accelerometer Study across sex and education levels. A total of 228 participants are observed. There is relatively balanced representation of males (118) and females (110) in this sample. In each education group, there is an approximately equal number of males and females, with exception of the high school equivalent group where there are more males than females.
+There appears to be a greater number of participants with higher education in this sample, as noted by the number of participants with advanced education compared to those with less than high school or equivalent, which may reflect broader educational trends or potential selection bias in the study. Approximately half of the participants (115) have more than a high school education, indicating a skew towards higher education levels in the sample.
