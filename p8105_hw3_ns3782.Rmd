@@ -25,18 +25,9 @@ data("ny_noaa")
 
 ## Dataset Overview
 
-The NY NOAA dataset contains `r nrow(ny_noaa)` observations of `r ncol(ny_noaa)` weather related variables. The date range of the observations is from `r min(ny_noaa$date)` to `r max(ny_noaa$date)`. 
+The NY NOAA dataset contains `r nrow(ny_noaa)` observations of `r ncol(ny_noaa)` weather related variables, corresponding to daily weather data collected from `r ny_noaa %>% pull(id) %>% unique() %>% length()` unique weather stations in New York City. The date range of the observations is from `r min(ny_noaa$date)` to `r max(ny_noaa$date)`. 
 
-Key variables and their types include:
-
-* id: `r class(ny_noaa$id)` (weather station identifier)
-* date: `r class(ny_noaa$date)` (YYYY-MM-DD)
-* prcp: `r class(ny_noaa$prcp)` (precipitation)
-* snow: `r class(ny_noaa$snow)` (snowfall)
-* snwd: `r class(ny_noaa$snwd)` (snow depth)
-* tmax: `r class(ny_noaa$tmax)` (maximum temperature)
-* tmin: `r class(ny_noaa$tmin)` (minimum temperature)
-
+Key variables and their types include: `id` (`r class(ny_noaa$id)`, weather station identifier), `date` (`r class(ny_noaa$date)`, YYYY-MM-DD), `prcp` (`r class(ny_noaa$prcp)`, precipitation), `snow` (`r class(ny_noaa$snow)`, snowfall), `snwd` (`r class(ny_noaa$snwd)`, snow depth), `tmax` (`r class(ny_noaa$tmax)`, maximum temperature), `tmin` (`r class(ny_noaa$tmin)`, minimum temperature).
 
 Missing data is an issue in this dataset. The total number of missing values across all variables is `r sum(is.na(ny_noaa))`, which represents `r round(sum(is.na(ny_noaa)) / (nrow(ny_noaa) * ncol(ny_noaa)) * 100, 2)`% of all observations in the dataset. 
 
@@ -53,9 +44,8 @@ ny_noaa_clean <- ny_noaa %>%
     year = lubridate::year(date),
     month = lubridate::month(date),
     day = lubridate::day(date),
-    prcp = prcp / 10,  # Convert from tenths of mm to mm
-    tmax = as.numeric(tmax) / 10,  # Convert from tenths of degrees C to degrees C
-    tmin = as.numeric(tmin) / 10   # Convert from tenths of degrees C to degrees C
+    tmax = as.numeric(tmax),
+    tmin = as.numeric(tmin) 
   )
 
 
@@ -70,4 +60,4 @@ ny_noaa_clean %>%
 
 ## Most Common Snowfall values
 
-The most common snowfall values for NYC are `r ny_noaa %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% .[1]` mm (`r ny_noaa %>% count(snow) %>% arrange(desc(n)) %>% pull(n) %>% .[1]` occurrences), followed by NA (`r sum(is.na(ny_noaa$snow))` occurrences). 0 is the most common, likely due to New York City rarely having snow year round particularly in recent years, while NA represents missing data. The next most common values are `r ny_noaa %>% filter(!is.na(snow), snow > 0) %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% head(3) %>% paste(collapse = ", ")` mm, which are 1 inch, 0.5 inch, and 2 inches respectively. These are indicative of typical light to moderate snowfall events, which would be expected of New York City during colder months.
+The most common snowfall values for NYC are `r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% .[1]` mm (`r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(n) %>% .[1]` occurrences), followed by NA (`r sum(is.na(ny_noaa_clean$snow))` occurrences). 0 is the most common, likely due to New York City rarely having snow year round particularly in recent years, while NA represents missing data. The next most common values are `r ny_noaa_clean %>% filter(!is.na(snow), snow > 0) %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% head(3) %>% paste(collapse = ", ")` mm, which are 1 inch, 0.5 inch, and 2 inches respectively. These are indicative of typical light to moderate snowfall events, which would be expected of New York City during colder months.
