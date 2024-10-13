@@ -44,8 +44,8 @@ ny_noaa_clean <- ny_noaa %>%
     year = lubridate::year(date),
     month = lubridate::month(date),
     day = lubridate::day(date),
-    tmax = as.numeric(tmax),
-    tmin = as.numeric(tmin) 
+    tmax = as.numeric(tmax) / 10,
+    tmin = as.numeric(tmin) / 10
   )
 
 
@@ -61,3 +61,40 @@ ny_noaa_clean %>%
 ## Most Common Snowfall values
 
 The most common snowfall values for NYC are `r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% .[1]` mm (`r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(n) %>% .[1]` occurrences), followed by NA (`r sum(is.na(ny_noaa_clean$snow))` occurrences). 0 is the most common, likely due to New York City rarely having snow year round particularly in recent years, while NA represents missing data. The next most common values are `r ny_noaa_clean %>% filter(!is.na(snow), snow > 0) %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% head(3) %>% paste(collapse = ", ")` mm, which are 1 inch, 0.5 inch, and 2 inches respectively. These are indicative of typical light to moderate snowfall events, which would be expected of New York City during colder months.
+
+
+
+```{r problem_1_plot}
+
+# Load libraries
+library(ggplot2)
+
+# Two-panel plot
+
+temp_plot <- ny_noaa_clean %>%
+  filter(month %in% c(1, 7), !is.na(tmax)) %>%
+  group_by(id, year, month) %>%
+  summarise(avg_tmax = mean(tmax, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = year, y = avg_tmax, group = id, color = id)) +
+  geom_line(alpha = 0.3) +
+  facet_wrap(~month, scales = "free_y", 
+             labeller = labeller(month = c("1" = "January", "7" = "July"))) +
+  labs(title = "Average Maximum Temperature in January and July by Station (Celsius)",
+       x = "Year", y = "Average Max Temperature (Celsius)") +
+  theme(legend.position = "none")
+
+print(temp_plot)
+
+
+
+```
+
+## Average max temperature in January and in July
+
+There are several observations based on the two-panel plot showing the average max temperature in January and in July in each station across years.
+First, expected seasonal differences in maximum temperature are observable between the winter and summer months in New York. July temperatures are consistently higher on average (20-35°C) than January temperatures (-10 to 10°C).
+Second, January temperatures appear to have more variability than July temperatures, which may be typical for NYC's climate.
+Third, there is a spike in maximum temperatures for July 2010. Several stations show temperatures reaching or exceeding 30°C. This appears to be the highest point on the entire July graph, suggesting that July 2010 may have been the hottest July in the 30-year period shown.
+Lastly, concerning outliers. The month of January shows comparatively more extreme outliers compared to July, with some years in January observed to have unusually low or high temperatures. This is especially apparent around 1982, where there is a dip in temperature below -10°C. July has fewer extreme outliers, but there is a notable dip around 1988 for one weather station to below 15°C suggesting a significant weather event, or weather station recording error. 
+
