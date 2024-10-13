@@ -9,12 +9,36 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Problem 1
+# Problem 1
 
 ```{r problem_1}
 
+# Load libraries and import data
+
+library(p8105.datasets)
+library(tidyverse)
+
+data("ny_noaa")
 
 
 ```
 
+## Dataset Overview
+
+The NY NOAA dataset contains `r nrow(ny_noaa)` observations of `r ncol(ny_noaa)` weather related variables. The date range of the observations is from `r min(ny_noaa$date)` to `r max(ny_noaa$date)`. 
+
+Key variables and their types include:
+
+* id: `r class(ny_noaa$id)` (weather station identifier)
+* date: `r class(ny_noaa$date)` (YYYY-MM-DD)
+* prcp: `r class(ny_noaa$prcp)` (precipitation)
+* snow: `r class(ny_noaa$snow)` (snowfall)
+* snwd: `r class(ny_noaa$snwd)` (snow depth)
+* tmax: `r class(ny_noaa$tmax)` (maximum temperature)
+* tmin: `r class(ny_noaa$tmin)` (minimum temperature)
+
+
+Missing data is an issue in this dataset. The total number of missing values across all variables is `r sum(is.na(ny_noaa))`, which represents `r round(sum(is.na(ny_noaa)) / (nrow(ny_noaa) * ncol(ny_noaa)) * 100, 2)`% of all observations in the dataset. 
+
+For the id variable, there are `r sum(is.na(ny_noaa$id))` missing values (`r round(sum(is.na(ny_noaa$id)) / nrow(ny_noaa) * 100, 2)`% of total observations). The date variable has `r sum(is.na(ny_noaa$date))` missing values (`r round(sum(is.na(ny_noaa$date)) / nrow(ny_noaa) * 100, 2)`% of total observations). Precipitation (prcp) has `r sum(is.na(ny_noaa$prcp))` missing values (`r round(sum(is.na(ny_noaa$prcp)) / nrow(ny_noaa) * 100, 2)`% of total observations). For snowfall (snow), there are `r sum(is.na(ny_noaa$snow))` missing values (`r round(sum(is.na(ny_noaa$snow)) / nrow(ny_noaa) * 100, 2)`% of total observations). Snow depth (snwd) has `r sum(is.na(ny_noaa$snwd))` missing values (`r round(sum(is.na(ny_noaa$snwd)) / nrow(ny_noaa) * 100, 2)`% of total observations). Maximum temperature (tmax) has `r sum(is.na(ny_noaa$tmax))` missing values (`r round(sum(is.na(ny_noaa$tmax)) / nrow(ny_noaa) * 100, 2)`% of total observations). Minimum temperature (tmin) has `r sum(is.na(ny_noaa$tmin))` missing values (`r round(sum(is.na(ny_noaa$tmin)) / nrow(ny_noaa) * 100, 2)`% of total observations).
 
