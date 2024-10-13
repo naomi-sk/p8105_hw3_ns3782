@@ -336,3 +336,11 @@ scale_x_continuous(breaks = seq(0, 1440, 180),
        color = "Sex")
 
 ```
+
+## 24-hour Activity Time Courses by Education Level and Sex
+
+Overall, based on the three-panel plot, there is a common daily rhythm observed all education levels, with activity lowest during night hours, sharply increasing around 6:00 AM, and gradually declining towards the evening and nighttime hours.
+
+In the "Less than high school" group, activity patterns are similar between males and females, with males showing slightly higher activity during night hours. 
+The "High school equivalent" category displays a more pronounced difference, with females demonstrating higher activity levels throughout most of the day, particularly from mid-morning to early evening. Further, this trend is also more notable in the "More than high school" group, where females consistently show higher activity levels across the entire day.  However, the "More than high school" group maintains higher activity levels for a longer period during the day compared to other groups. Overall, these data suggest higher education levels are associated with more pronounced sex-based differences in activity, which may be linked to occupational or lifestyle activities differing between these groups.
+
