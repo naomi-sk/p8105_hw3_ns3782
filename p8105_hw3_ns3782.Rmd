@@ -220,7 +220,7 @@ The resulting dataset was filtered to include only participants aged 21 and olde
 
 ```{r problem_2_summary_viz}
 
-# Load necessary package
+# Load and install necessary package
 
 library(knitr)
 
@@ -239,11 +239,9 @@ education_sex_table <- nhanes_cleaned %>%
               Total = sum(Total, na.rm = TRUE))
   )
 
-
-
 # Display the table
-kable(education_sex_table, caption = "NHANES Accelerometer Study: Participant Count by Sex and Education Level")
 
+kable(education_sex_table, caption = "NHANES Accelerometer Study: Participant Count by Sex and Education Level") 
 
 ```
 
