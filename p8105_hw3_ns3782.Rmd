@@ -44,8 +44,11 @@ ny_noaa_clean <- ny_noaa %>%
     year = lubridate::year(date),
     month = lubridate::month(date),
     day = lubridate::day(date),
-    tmax = as.numeric(tmax) / 10,
-    tmin = as.numeric(tmin) / 10
+    prcp = prcp / 10, 
+    snow = snow / 10, 
+    snwd = snwd / 10,  
+    tmax = as.numeric(tmax) / 10, 
+    tmin = as.numeric(tmin) / 10   
   )
 
 
@@ -58,9 +61,13 @@ ny_noaa_clean %>%
 
 ```
 
+## Notes regarding data cleaning
+
+In the process of cleaning the NOAA weather data, I undertook several unit conversions to improve interpretability of the weather data. Precipitation was changed from tenths of mm to mm, while snowfall and snow depth were converted from mm to cm. These are in line with typical measures used for these data. Maximum and minimum temperatures were also adjusted from tenths of degrees Celsius to whole degrees Celsius. These conversions were made to standardise units across the weather variables and enable easier subsequent analysis.
+
 ## Most Common Snowfall values
 
-The most common snowfall values for NYC are `r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% .[1]` mm (`r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(n) %>% .[1]` occurrences), followed by NA (`r sum(is.na(ny_noaa_clean$snow))` occurrences). 0 is the most common, likely due to New York City rarely having snow year round particularly in recent years, while NA represents missing data. The next most common values are `r ny_noaa_clean %>% filter(!is.na(snow), snow > 0) %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% head(3) %>% paste(collapse = ", ")` mm, which are 1 inch, 0.5 inch, and 2 inches respectively. These are indicative of typical light to moderate snowfall events, which would be expected of New York City during colder months.
+The most common snowfall values for NYC are `r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% .[1]` cm (`r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(n) %>% .[1]` occurrences), followed by NA (`r sum(is.na(ny_noaa_clean$snow))` occurrences). 0 is the most common, likely due to New York City rarely having snow year round particularly in recent years, while NA represents missing data. The next most common values are `r ny_noaa_clean %>% filter(!is.na(snow), snow > 0) %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% head(3) %>% paste(collapse = ", ")` cm, which are 1 inch, 0.5 inch, and 2 inches respectively. These are indicative of typical light to moderate snowfall events, which would be expected of New York City during colder months.
 
 
 
@@ -103,7 +110,6 @@ Lastly, concerning outliers. The month of January shows comparatively more extre
 
 # Load required libraries 
 
-library(tidyverse)
 library(patchwork)
 library(ggridges)
 
@@ -120,19 +126,21 @@ p1_nyc_noaa_plot <- ny_noaa_clean %>%
   labs(title = "Average Daily Maximum and Minimum Temperatures in New York City (1981-2010)", x = "Date", y = "Temperature (Celsius)", color = "Temperature Type") +
   theme(legend.position = "bottom")
 
-# Panel 2: Boxplot of snowfall values greater than 0 and less than 100
+# Panel 2: Ridge plot of snowfall values greater than 0 and less than 100
 
 p2_nyc_noaa_plot <- ny_noaa_clean %>%
   filter(snow > 0, snow < 100) %>%
-  ggplot(aes(x = factor(year), y = snow)) +
-  geom_boxplot() +
-  labs(title = "Distribution of snowfall in New York City (1981-2010)", x = "Year", y = "Snowfall (mm)") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  
-
+  ggplot(aes(x = snow, y = factor(year), fill = factor(year))) +
+  geom_density_ridges(scale = 0.9) +
+  labs(title = "Distribution of Snowfall in New York City (1981-2010)", 
+       x = "Snowfall (mm)", y = "Year") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
 
 # Combine and print plot
 
-print(p1_nyc_noaa_plot / p2_nyc_noaa_plot) 
+print(p1_nyc_noaa_plot / p2_nyc_noaa_plot)
+
 
 
 ```
