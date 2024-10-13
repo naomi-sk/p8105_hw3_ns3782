@@ -239,11 +239,13 @@ education_sex_table <- nhanes_cleaned %>%
               Total = sum(Total, na.rm = TRUE))
   )
 
-
-
 # Display the table
-kable(education_sex_table, caption = "NHANES Accelerometer Study: Participant Count by Sex and Education Level")
 
+knitr::kable(
+  education_sex_table,
+  caption = "NHANES Accelerometer Study: Participant Count by Sex and Education Level",
+  align = "c"  # Center align the columns
+)
 
 ```
 
