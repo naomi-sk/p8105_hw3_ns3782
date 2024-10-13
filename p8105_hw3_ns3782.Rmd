@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Problem 1
 
-```{r problem_1}
+```{r problem_1_setup}
 
 # Load libraries and import data
 
@@ -42,3 +42,32 @@ Missing data is an issue in this dataset. The total number of missing values acr
 
 For the id variable, there are `r sum(is.na(ny_noaa$id))` missing values (`r round(sum(is.na(ny_noaa$id)) / nrow(ny_noaa) * 100, 2)`% of total observations). The date variable has `r sum(is.na(ny_noaa$date))` missing values (`r round(sum(is.na(ny_noaa$date)) / nrow(ny_noaa) * 100, 2)`% of total observations). Precipitation (prcp) has `r sum(is.na(ny_noaa$prcp))` missing values (`r round(sum(is.na(ny_noaa$prcp)) / nrow(ny_noaa) * 100, 2)`% of total observations). For snowfall (snow), there are `r sum(is.na(ny_noaa$snow))` missing values (`r round(sum(is.na(ny_noaa$snow)) / nrow(ny_noaa) * 100, 2)`% of total observations). Snow depth (snwd) has `r sum(is.na(ny_noaa$snwd))` missing values (`r round(sum(is.na(ny_noaa$snwd)) / nrow(ny_noaa) * 100, 2)`% of total observations). Maximum temperature (tmax) has `r sum(is.na(ny_noaa$tmax))` missing values (`r round(sum(is.na(ny_noaa$tmax)) / nrow(ny_noaa) * 100, 2)`% of total observations). Minimum temperature (tmin) has `r sum(is.na(ny_noaa$tmin))` missing values (`r round(sum(is.na(ny_noaa$tmin)) / nrow(ny_noaa) * 100, 2)`% of total observations).
 
+
+```{r problem_1_cleaning}
+
+# Data cleaning
+
+ny_noaa_clean <- ny_noaa %>%
+  mutate(
+    date = as.Date(date),
+    year = lubridate::year(date),
+    month = lubridate::month(date),
+    day = lubridate::day(date),
+    prcp = prcp / 10,  # Convert from tenths of mm to mm
+    tmax = as.numeric(tmax) / 10,  # Convert from tenths of degrees C to degrees C
+    tmin = as.numeric(tmin) / 10   # Convert from tenths of degrees C to degrees C
+  )
+
+
+# Most common snowfall values
+ny_noaa_clean %>%
+  count(snow) %>%
+  arrange(desc(n)) %>%
+  head(5)
+
+
+```
+
+## Most Common Snowfall values
+
+The most common snowfall values for NYC are `r ny_noaa %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% .[1]` mm (`r ny_noaa %>% count(snow) %>% arrange(desc(n)) %>% pull(n) %>% .[1]` occurrences), followed by NA (`r sum(is.na(ny_noaa$snow))` occurrences). 0 is the most common, likely due to New York City rarely having snow year round particularly in recent years, while NA represents missing data. The next most common values are `r ny_noaa %>% filter(!is.na(snow), snow > 0) %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% head(3) %>% paste(collapse = ", ")` mm, which are 1 inch, 0.5 inch, and 2 inches respectively. These are indicative of typical light to moderate snowfall events, which would be expected of New York City during colder months.
