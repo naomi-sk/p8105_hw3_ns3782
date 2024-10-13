@@ -153,7 +153,7 @@ p2_nyc_noaa_plot <- ny_noaa_clean %>%
     fill = "steelblue",
     color = "darkblue"
   ) +
-  scale_x_continuous(limits = c(0, 100), expand = c(0, 0)) +
+  scale_x_continuous(limits = c(-3, 100), expand = c(0, 0)) +
   labs(title = "Distribution of Snowfall in New York City (1981-2010)", 
        x = "Snowfall (cm)", y = "Year")
 
@@ -278,3 +278,35 @@ For those with less than high school education, the age distribution skews older
 A noteworthy observation is that the "More than high school" group skews comparatively younger in age compared to the other education groups, especially for females, with a pronounced peak around 30-40 years. This suggests generational differences in educational attainment, with a greater number of younger participants, especially young females, having higher education levels in the current sample. 
 The plot also reveals sex differences, particularly in higher education, where females show a stronger representation in younger age groups compared to males. These observations align with the participant counts in the accompanying table, which shows a higher number of participants (115) in the "More than high school" category. 
 
+
+
+
+```{r problem_2_total_activity}
+
+# Calculate total activity and add it to nhanes_cleaned
+
+nhanes_cleaned <- nhanes_cleaned %>%
+  rowwise() %>%
+  mutate(total_activity = sum(c_across(min1:min1440), na.rm = TRUE)) %>%
+  ungroup()
+
+# Create the plot
+
+ggplot(nhanes_cleaned, aes(x = age, y = total_activity, color = sex)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~ education, ncol = 1) +
+  scale_color_manual(values = c("male" = "purple", "female" = "skyblue")) +
+  labs(title = "Total Daily Activity vs Age by Sex and Education Level",
+       x = "Age (years)",
+       y = "Total Daily Activity (MIMS)",
+       color = "Sex") 
+
+
+```
+
+## Total Daily Activity vs Age, by Sex and Education Level
+
+Based on the plot, there is a general observable trend of decreasing activity with age across the different education categories, though this rate of and extent of decline varies depending on sex and education level. In the "Less than high school" group, men appear to have slightly higher activity levels than women in middle age, which declines to be close to equivalent in old age (70-80 years). 
+The "High school equivalent" category shows that females tend to have higher activity levels in in their 20s, declining to have similar activity levels to males around age 60.
+The "More than high school" group shows a similar distribution of activity levels between the sexes. However, around age 50 females have a slight spike in activity levels compared to men. This difference then declines, and by age 80, the activity levels between sexes in this education group become similar.
