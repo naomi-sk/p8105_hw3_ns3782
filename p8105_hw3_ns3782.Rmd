@@ -139,3 +139,21 @@ print(p1_nyc_noaa_plot / p2_nyc_noaa_plot)
 
 
 
+# Problem 2
+
+```{r problem_2_setup}
+
+## Import and clean datasets
+
+# Import and clean nhanes_covar csv
+
+nhanes_covar <- read_csv("./data/nhanes_covar.csv", skip = 4) %>% 
+  janitor::clean_names() 
+
+# Import and clean results nhanes_accel csv
+
+nhanes_accel <- read_csv("./data/nhanes_accel.csv") %>% 
+  janitor::clean_names() 
+
+
+```
