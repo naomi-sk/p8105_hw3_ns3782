@@ -310,3 +310,29 @@ ggplot(nhanes_cleaned, aes(x = age, y = total_activity, color = sex)) +
 Based on the plot, there is a general observable trend of decreasing activity with age across the different education categories, though this rate of and extent of decline varies depending on sex and education level. In the "Less than high school" group, men appear to have slightly higher activity levels than women in middle age, which declines to be close to equivalent in old age (70-80 years). 
 The "High school equivalent" category shows that females tend to have higher activity levels in in their 20s, declining to have similar activity levels to males around age 60.
 The "More than high school" group shows a similar distribution of activity levels between the sexes. However, around age 50 females have a slight spike in activity levels compared to men. This difference then declines, and by age 80, the activity levels between sexes in this education group become similar.
+
+```{r problem2_24hr_activity}
+
+# Pivot dataset from wide to long to get minute var
+
+nhanes_long <- nhanes_cleaned %>%
+  pivot_longer(cols = starts_with("min"), 
+               names_to = "minute", 
+               values_to = "activity",
+               names_prefix = "min") %>%
+  mutate(minute = as.numeric(minute))
+
+# Create three-panel plot
+
+ggplot(nhanes_long, aes(x = minute, y = activity, color = sex)) +
+  geom_smooth(se = FALSE) +
+  facet_wrap(~ education, ncol = 1) +
+scale_x_continuous(breaks = seq(0, 1440, 180),
+                     labels = c("00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "24:00")) +
+  scale_color_manual(values = c("male" = "purple", "female" = "skyblue")) +
+  labs(title = "24-hour Activity Time Courses by Education Level and Sex",
+       x = "Time of Day",
+       y = "Activity (MIMS)",
+       color = "Sex")
+
+```
