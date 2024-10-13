@@ -143,8 +143,6 @@ print(p1_nyc_noaa_plot / p2_nyc_noaa_plot)
 
 ```{r problem_2_setup}
 
-## Import and clean datasets
-
 # Import and clean nhanes_covar csv
 
 nhanes_covar <- read_csv("./data/nhanes_covar.csv", skip = 4) %>% 
@@ -154,6 +152,37 @@ nhanes_covar <- read_csv("./data/nhanes_covar.csv", skip = 4) %>%
 
 nhanes_accel <- read_csv("./data/nhanes_accel.csv") %>% 
   janitor::clean_names() 
+
+# Merge datasets
+
+nhanes_merged <- nhanes_covar %>%
+  left_join(nhanes_accel, by = "seqn")
+
+# Exclude participants less than 21 years of age and missing demographic data
+
+nhanes_cleaned <- nhanes_merged %>%
+  filter(age >= 21) %>%
+  drop_na(sex, age, bmi, education)
+
+# Check variable types
+
+str(nhanes_cleaned)
+
+# Code variable classes
+
+nhanes_cleaned <- nhanes_cleaned %>%
+  mutate(
+    sex = factor(sex, 
+                 levels = c(1, 2), 
+                 labels = c("male", "female")),
+    education = factor(education, 
+                       levels = c(1, 2, 3),
+                       labels = c("Less than high school", 
+                                  "High school equivalent", 
+                                  "More than high school"),
+                       ordered = TRUE)
+  )
+
 
 
 ```
