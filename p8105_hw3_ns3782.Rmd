@@ -123,7 +123,9 @@ p1_nyc_noaa_plot <- ny_noaa_clean %>%
   geom_line(aes(y = avg_tmax, color = "Maximum"), alpha = 0.7) +
   geom_line(aes(y = avg_tmin, color = "Minimum"), alpha = 0.7) +
   scale_color_manual(values = c("Maximum" = "red", "Minimum" = "blue")) +
-  labs(title = "Average Daily Maximum and Minimum Temperatures in New York City (1981-2010)", x = "Date", y = "Temperature (Celsius)", color = "Temperature Type") +
+  labs(title = "Average Daily Maximum and Minimum Temperatures in New York City (1981-2010)", 
+       x = "Date", y = "Temperature (Celsius)", 
+       color = "Temperature Type") +
   theme(legend.position = "bottom")
 
 # Panel 2: Ridge plot of snowfall values greater than 0 and less than 100
@@ -131,15 +133,17 @@ p1_nyc_noaa_plot <- ny_noaa_clean %>%
 p2_nyc_noaa_plot <- ny_noaa_clean %>%
   filter(snow > 0, snow < 100) %>%
   ggplot(aes(x = snow, y = factor(year), fill = factor(year))) +
-  geom_density_ridges(scale = 0.9) +
+  geom_density_ridges(scale = 2, rel_min_height = 0.01) +
   labs(title = "Distribution of Snowfall in New York City (1981-2010)", 
        x = "Snowfall (mm)", y = "Year") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none")
 
-# Combine and print plot
+# Combine plots and adjust layout
 
-print(p1_nyc_noaa_plot / p2_nyc_noaa_plot)
+combined_plot <- p1_nyc_noaa_plot / p2_nyc_noaa_plot 
+
+print(combined_plot)
 
 
 
