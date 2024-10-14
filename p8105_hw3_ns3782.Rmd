@@ -344,3 +344,61 @@ Overall, based on the three-panel plot, there is a common daily rhythm observed 
 In the "Less than high school" group, activity patterns are similar between males and females, with males showing slightly higher activity during night hours. 
 The "High school equivalent" category displays a more pronounced difference, with females demonstrating higher activity levels throughout most of the day, particularly from mid-morning to early evening. Further, this trend is also more notable in the "More than high school" group, where females consistently show higher activity levels across the entire day.  However, the "More than high school" group maintains higher activity levels for a longer period during the day compared to other groups. Overall, these data suggest higher education levels are associated with more pronounced sex-based differences in activity, which may be linked to occupational or lifestyle activities differing between these groups.
 
+# Problem 3
+
+```{r problem_3_dataclean}
+
+# Import and clean Jan 2020 csv
+
+citi_jan2020 <- read_csv("./data/Jan 2020 Citi.csv") %>% 
+  janitor::clean_names() 
+
+# Import and clean results Jan 2024 csv
+
+citi_jan2024 <- read_csv("./data/Jan 2024 Citi.csv") %>% 
+  janitor::clean_names() 
+
+# Import and clean July 2020 csv
+
+citi_july2020 <- read_csv("./data/July 2020 Citi.csv") %>% 
+  janitor::clean_names() 
+
+# Import and clean results July 2024 csv
+
+citi_july2024 <- read_csv("./data/July 2024 Citi.csv") %>% 
+  janitor::clean_names() 
+
+# Check to see variable names and data types in each dataset f
+
+map(list(citi_jan2020, citi_jan2024, citi_july2020, citi_july2024), names)
+map(list(citi_jan2020, citi_jan2024, citi_july2020, citi_july2024), sapply, class)
+
+# Merge datasets
+
+citi_rides_full <- bind_rows(
+  citi_jan2020 %>% mutate(year = 2020, month = "January"),
+  citi_jan2024 %>% mutate(year = 2024, month = "January"),
+  citi_july2020 %>% mutate(year = 2020, month = "July"),
+  citi_july2024 %>% mutate(year = 2024, month = "July")
+)
+
+
+
+```
+
+## Dataset Overview
+
+The final Citi Bike rides dataset for New York City contains `r nrow(citi_rides_full)` rows and `r ncol(citi_rides_full)` columns.
+
+Key variables include `ride_id` (`r class(citi_rides_full$ride_id)`), a unique identifier for each ride; `rideable_type` (`r class(citi_rides_full$rideable_type)`), indicating the type of bike used; `weekdays` (`r class(citi_rides_full$weekdays)`), showing the day of the week; `duration` (`r class(citi_rides_full$duration)`), representing the length of the ride in minutes; `start_station_name` and `end_station_name` (both `r class(citi_rides_full$start_station_name)`), representing the names of the starting and ending stations respectively; `member_casual` (`r class(citi_rides_full$member_casual)`), indicating the rider's membership status; and `year` and `month` (both `r class(citi_rides_full$year)`), indicating when the ride took place.
+
+
+The total number of missing values across all variables is `r sum(is.na(citi_rides_full))`, which represents `r round(sum(is.na(citi_rides_full)) / (nrow(citi_rides_full) * ncol(citi_rides_full)) * 100, 2)`% of all observations in the dataset.
+
+```{r problem_3_summary_table}
+
+
+
+
+
+```
