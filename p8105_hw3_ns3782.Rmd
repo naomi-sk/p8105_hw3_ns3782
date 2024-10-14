@@ -386,7 +386,7 @@ citi_rides_full <- bind_rows(
 
 ```
 
-## Dataset Overview
+## NYC Citi Bike Dataset Overview
 
 The final Citi Bike rides dataset for New York City contains `r nrow(citi_rides_full)` rows and `r ncol(citi_rides_full)` columns.
 
@@ -501,3 +501,12 @@ citi_rides_full %>%
     strip.background = element_blank())
 
 ```
+
+## Effects of month, membership status, and bike type on Citi Bike ride duration
+
+Considering the impact of membership status, it appears as though that casual riders generally have longer ride durations compared to members. This is evident from the higher median lines and larger interquartile ranges in the boxplots for casual riders, across both January and July as well as bike types. This suggests that casual riders may tend to use citi bikes for recreation or tourism, while members could be using them for shorter, more routine commuter trips.
+
+Bike type may also impact ride duration, but not uniformly. For casual riders, the boxplots show that electric bikes have consistently lower median ride durations and smaller interquartile ranges compared to classic bikes in both January and July, indicating shorter ride durations for electric bikes among this user group. However this difference does not seem to be notable for citi bike members, as the boxes for classic and electric bikes are overlapping and of similar size across both months.
+
+There do not appear major differences in citi bike usage based on month. For citi bike members, ride durations remain relatively consistent across both January and July. While casual riders show a slight tendency for marginally longer rides in January compared to July, the difference appears to be small with substantial overlap in the distributions. 
+
