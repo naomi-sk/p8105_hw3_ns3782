@@ -417,3 +417,16 @@ citi_rides_full %>%
 Based on the table, there appears to be a seasonal trend in citi bike usage in New York. July has higher ridership than January in both 2020 and 2024, indicating people are not using citi bikes as frequently during winter.
 
 Overall, there has been a major increase in citibike usage from 2020, with total rides more than tripling from January 2020 to July 2024 (as the total rides went from `12,420` in January 2020 to `47,156` in July 2024). While regular members comprise the majority of riders across all periods, the proportion of casual riders appears to have increased over time, particularly in July 2024 where casual riders made up `r round(10894 / 47156 * 100, 1)`% of total rides, suggesting the rising popularity of Citi Bike among new users between 2020-2024.
+
+```{r }
+
+# Create table of count rides per starting station (July 2024)
+
+citi_rides_full %>%
+  filter(month == "July" & year == "2024") %>%
+  count(start_station_name, sort = TRUE) %>%
+  top_n(5, n) %>%
+  rename("Starting Station" = start_station_name, "Number of Rides" = n) %>%
+  kable(caption = "5 most popular Citi Bike starting stations in July 2024")
+
+```
