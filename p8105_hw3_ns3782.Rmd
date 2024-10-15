@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ```
 
-# Problem 1
+# Problem 1: NY NOAA
 
 ## Import Data 
 
@@ -241,7 +241,7 @@ education_sex_table <- nhanes_cleaned %>%
 
 # Display the table
 
-kable(education_sex_table, caption = "NHANES Accelerometer Study: Participant Count by Sex and Education Level") 
+kable(education_sex_table, caption = "Table 1. NHANES Accelerometer Study: Participant Count by Sex and Education Level") 
 
 ```
 
@@ -416,7 +416,7 @@ citi_rides_full %>%
   adorn_totals("row") %>%
   adorn_totals("col") %>%
   rename("Casual Riders" = casual, "Members" = member) %>%
-  kable(caption = "Total number of Citi Bike rides (Jan 2020, July 2020, Jan 2024, July 2024) by rider status")
+  kable(caption = "Table 2. Total number of Citi Bike rides (Jan 2020, July 2020, Jan 2024, July 2024) by rider status")
 
 ```
 
@@ -435,7 +435,7 @@ citi_rides_full %>%
   count(start_station_name, sort = TRUE) %>%
   top_n(5, n) %>%
   rename("Starting Station" = start_station_name, "Number of Rides" = n) %>%
-  kable(caption = "5 most popular Citi Bike starting stations in July 2024")
+  kable(caption = "Table 3. 5 most popular Citi Bike starting stations in July 2024")
 
 ```
 
