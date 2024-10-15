@@ -20,6 +20,8 @@ knitr::opts_chunk$set(
 
 # Problem 1
 
+## Import Data 
+
 ```{r problem_1_setup}
 
 # Load libraries and import data
@@ -42,6 +44,9 @@ Missing data is an issue in this dataset. The total number of missing values acr
 
 For the id variable, there are `r sum(is.na(ny_noaa$id))` missing values (`r round(sum(is.na(ny_noaa$id)) / nrow(ny_noaa) * 100, 2)`% of total observations). The date variable has `r sum(is.na(ny_noaa$date))` missing values (`r round(sum(is.na(ny_noaa$date)) / nrow(ny_noaa) * 100, 2)`% of total observations). Precipitation (prcp) has `r sum(is.na(ny_noaa$prcp))` missing values (`r round(sum(is.na(ny_noaa$prcp)) / nrow(ny_noaa) * 100, 2)`% of total observations). For snowfall (snow), there are `r sum(is.na(ny_noaa$snow))` missing values (`r round(sum(is.na(ny_noaa$snow)) / nrow(ny_noaa) * 100, 2)`% of total observations). Snow depth (snwd) has `r sum(is.na(ny_noaa$snwd))` missing values (`r round(sum(is.na(ny_noaa$snwd)) / nrow(ny_noaa) * 100, 2)`% of total observations). Maximum temperature (tmax) has `r sum(is.na(ny_noaa$tmax))` missing values (`r round(sum(is.na(ny_noaa$tmax)) / nrow(ny_noaa) * 100, 2)`% of total observations). Minimum temperature (tmin) has `r sum(is.na(ny_noaa$tmin))` missing values (`r round(sum(is.na(ny_noaa$tmin)) / nrow(ny_noaa) * 100, 2)`% of total observations).
 
+## Clean Data
+
+In the process of cleaning the NOAA weather data, I undertook several unit conversions to improve interpretability of the weather data. Precipitation was changed from tenths of mm to mm, while snowfall and snow depth were converted from mm to cm. These are in line with typical measures used for these data. Maximum and minimum temperatures were also adjusted from tenths of degrees Celsius to whole degrees Celsius. These conversions were made to standardise units across the weather variables and enable easier subsequent analysis.
 
 ```{r problem_1_cleaning}
 
@@ -70,15 +75,11 @@ ny_noaa_clean %>%
 
 ```
 
-## Notes regarding data cleaning
-
-In the process of cleaning the NOAA weather data, I undertook several unit conversions to improve interpretability of the weather data. Precipitation was changed from tenths of mm to mm, while snowfall and snow depth were converted from mm to cm. These are in line with typical measures used for these data. Maximum and minimum temperatures were also adjusted from tenths of degrees Celsius to whole degrees Celsius. These conversions were made to standardise units across the weather variables and enable easier subsequent analysis.
-
 ## Most Common Snowfall values
 
 The most common snowfall values for NYC are `r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% .[1]` cm (`r ny_noaa_clean %>% count(snow) %>% arrange(desc(n)) %>% pull(n) %>% .[1]` occurrences), followed by NA (`r sum(is.na(ny_noaa_clean$snow))` occurrences). 0 is the most common, likely due to New York City rarely having snow year round particularly in recent years, while NA represents missing data. The next most common values are `r ny_noaa_clean %>% filter(!is.na(snow), snow > 0) %>% count(snow) %>% arrange(desc(n)) %>% pull(snow) %>% head(3) %>% paste(collapse = ", ")` cm, which are 1 inch, 0.5 inch, and 2 inches respectively. These are indicative of typical light to moderate snowfall events, which would be expected of New York City during colder months.
 
-
+## Average max temperature in January and in July
 
 ```{r problem_1_plot}
 
@@ -106,14 +107,13 @@ print(temp_plot)
 
 ```
 
-## Average max temperature in January and in July
-
 There are several observations based on the two-panel plot showing the average max temperature in January and in July in each station across years.
 First, expected seasonal differences in maximum temperature are observable between the winter and summer months in New York. July temperatures are consistently higher on average (20-35°C) than January temperatures (-10 to 10°C).
 Second, January temperatures appear to have more variability than July temperatures, which may be typical for NYC's climate.
 Third, there is a spike in maximum temperatures for July 2010. Several stations show temperatures reaching or exceeding 30°C. This appears to be the highest point on the entire July graph, suggesting that July 2010 may have been the hottest July in the 30-year period shown.
 Lastly, concerning outliers. The month of January shows comparatively more extreme outliers compared to July, with some years in January observed to have unusually low or high temperatures. This is especially apparent around 1982, where there is a dip in temperature below -10°C. July has fewer extreme outliers, but there is a notable dip around 1988 for one weather station to below 15°C suggesting a significant weather event, or weather station recording error. 
 
+## Two-panel Plot: (i) Tmax vs Tin (ii) Snowfall values greater than zero and less than one hundred
 
 ```{r problem_1_plot2}
 
@@ -165,7 +165,9 @@ p1_nyc_noaa_plot + p2_nyc_noaa_plot +
 ```
 
 
-# Problem 2
+# Problem 2: NHANES Accelerometer Study
+
+## Importing, Cleaning, and Merging Datasets
 
 ```{r problem_2_setup}
 
@@ -211,12 +213,10 @@ nhanes_cleaned <- nhanes_cleaned %>%
 
 ```
 
-## Data Cleaning Process
-
-
 As part of the initial data wrangling process for Problem 2, I imported two datasets containing relevant NHANES study information, including demographic information (nhanes_covar) and accelerometer datasets (nhanes_accel). I proceeded to clean variable names in both using the janitor function. Subsequently, I merged these datasets using a left join on the 'seqn' variable, as this represents the sequence number or unique identifier for each observation (participant) in NHANES. 
-The resulting dataset was filtered to include only participants aged 21 and older as specified, and rows with missing demographic data were removed. Finally, I recoded the 'sex' and 'education' variables as factors with appropriate labels, with 'education' set as an ordered factor. This process resulted in a clean, merged dataset ready for analysis, with properly formatted categorical variables for sex and education level.
+The resulting dataset was filtered to include only participants aged 21 and older as specified, and rows with missing demographic data were removed. Finally, I recoded the 'sex' and 'education' variables as factors with appropriate labels, with 'education' set as an ordered factor. This process resulted in a clean, merged dataset ready for analysis, with correctly formatted categorical variables for sex and education level.
 
+## Participant Count by Sex and Education Level
 
 ```{r problem_2_summary_viz}
 
@@ -245,10 +245,10 @@ kable(education_sex_table, caption = "NHANES Accelerometer Study: Participant Co
 
 ```
 
-## NHANES Accelerometer Study: Participant Count by Sex and Education Level
-
 The table shows the distribution participants in the NHANES Accelerometer Study across sex and education levels. A total of 228 participants are observed. There is relatively balanced representation of males (118) and females (110) in this sample. In each education group, there is an approximately equal number of males and females, with exception of the high school equivalent group where there are more males than females.
 There appears to be a greater number of participants with higher education in this sample, as noted by the number of participants with advanced education compared to those with less than high school or equivalent, which may reflect broader educational trends or potential selection bias in the study. Approximately half of the participants (115) have more than a high school education, indicating a skew towards higher education levels in the sample.
+
+## Age Distribution by Sex and Education Level 
 
 ```{r problem_2_age_sex_viz}
 
@@ -271,15 +271,12 @@ ggplot(nhanes_cleaned, aes(x = age, y = sex, fill = sex)) +
 
 ```
 
-## NHANES Accelerometer Study: Age Distribution by Sex and Education Level 
-
 The ridge plot shows varying age distributions across education levels and sexes in the NHANES Accelerometer Study. 
 For those with less than high school education, the age distribution skews older for both sexes, with a peak around 60-70 years. The high school equivalent category shows a more uniform age spread, particularly for males. 
 A noteworthy observation is that the "More than high school" group skews comparatively younger in age compared to the other education groups, especially for females, with a pronounced peak around 30-40 years. This suggests generational differences in educational attainment, with a greater number of younger participants, especially young females, having higher education levels in the current sample. 
 The plot also reveals sex differences, particularly in higher education, where females show a stronger representation in younger age groups compared to males. These observations align with the participant counts in the accompanying table, which shows a higher number of participants (115) in the "More than high school" category. 
 
-
-
+## Total Daily Activity vs Age, by Sex and Education Level
 
 ```{r problem_2_total_activity}
 
@@ -305,11 +302,11 @@ ggplot(nhanes_cleaned, aes(x = age, y = total_activity, color = sex)) +
 
 ```
 
-## Total Daily Activity vs Age, by Sex and Education Level
-
 Based on the plot, there is a general observable trend of decreasing activity with age across the different education categories, though this rate of and extent of decline varies depending on sex and education level. In the "Less than high school" group, men appear to have slightly higher activity levels than women in middle age, which declines to be close to equivalent in old age (70-80 years). 
 The "High school equivalent" category shows that females tend to have higher activity levels in in their 20s, declining to have similar activity levels to males around age 60.
 The "More than high school" group shows a similar distribution of activity levels between the sexes. However, around age 50 females have a slight spike in activity levels compared to men. This difference then declines, and by age 80, the activity levels between sexes in this education group become similar.
+
+## 24-hour Activity Time Courses by Education Level and Sex
 
 ```{r problem2_24hr_activity}
 
@@ -337,14 +334,13 @@ scale_x_continuous(breaks = seq(0, 1440, 180),
 
 ```
 
-## 24-hour Activity Time Courses by Education Level and Sex
-
 Overall, based on the three-panel plot, there is a common daily rhythm observed all education levels, with activity lowest during night hours, sharply increasing around 6:00 AM, and gradually declining towards the evening and nighttime hours.
-
 In the "Less than high school" group, activity patterns are similar between males and females, with males showing slightly higher activity during night hours. 
 The "High school equivalent" category displays a more pronounced difference, with females demonstrating higher activity levels throughout most of the day, particularly from mid-morning to early evening. Further, this trend is also more notable in the "More than high school" group, where females consistently show higher activity levels across the entire day.  However, the "More than high school" group maintains higher activity levels for a longer period during the day compared to other groups. Overall, these data suggest higher education levels are associated with more pronounced sex-based differences in activity, which may be linked to occupational or lifestyle activities differing between these groups.
 
-# Problem 3
+# Problem 3: New York Bike Citi Bike Usage
+
+## Importing, Cleaning and Merging Datasets
 
 ```{r problem_3_dataclean}
 
@@ -368,10 +364,22 @@ citi_july2020 <- read_csv("./data/July 2020 Citi.csv") %>%
 citi_july2024 <- read_csv("./data/July 2024 Citi.csv") %>% 
   janitor::clean_names() 
 
-# Check to see variable names and data types in each dataset f
+```
+
+Following importing and cleaning the data, I checked whether the variable names and data types were consistent across the datasets before performing a merge.
+
+```{r problem3_checkdata, results='hide'}
+
+# Check to see variable names and data types in each dataset
 
 map(list(citi_jan2020, citi_jan2024, citi_july2020, citi_july2024), names)
 map(list(citi_jan2020, citi_jan2024, citi_july2020, citi_july2024), sapply, class)
+
+```
+
+Given that the variable names and data types were consistent, I proceeded with a merge of the datasets.
+
+```{r problem3_merge}
 
 # Merge datasets
 
@@ -382,8 +390,6 @@ citi_rides_full <- bind_rows(
   citi_july2024 %>% mutate(year = 2024, month = "July")
 )
 
-
-
 ```
 
 ## NYC Citi Bike Dataset Overview
@@ -393,6 +399,8 @@ The final Citi Bike rides dataset for New York City contains `r nrow(citi_rides_
 Key variables include `ride_id` (`r class(citi_rides_full$ride_id)`), a unique identifier for each ride; `rideable_type` (`r class(citi_rides_full$rideable_type)`), indicating the type of bike used; `weekdays` (`r class(citi_rides_full$weekdays)`), showing the day of the week; `duration` (`r class(citi_rides_full$duration)`), representing the length of the ride in minutes; `start_station_name` and `end_station_name` (both `r class(citi_rides_full$start_station_name)`), representing the names of the starting and ending stations respectively; `member_casual` (`r class(citi_rides_full$member_casual)`), indicating the rider's membership status; and `year` and `month` (both `r class(citi_rides_full$year)`), indicating when the ride took place.
 
 The total number of missing values across all variables is `r sum(is.na(citi_rides_full))`, which represents `r round(sum(is.na(citi_rides_full)) / (nrow(citi_rides_full) * ncol(citi_rides_full)) * 100, 2)`% of all observations in the dataset.
+
+## Citi Bike Rides by Rider Status (Jan 2020, July 2020, Jan 2024, July 2024)
 
 ```{r problem_3_summary_table}
 
@@ -411,8 +419,6 @@ citi_rides_full %>%
   kable(caption = "Total number of Citi Bike rides (Jan 2020, July 2020, Jan 2024, July 2024) by rider status")
 
 ```
-
-## Citi Bike Rides by Rider Status (Jan 2020, July 2020, Jan 2024, July 2024)
 
 Based on the table, there appears to be a seasonal trend in citi bike usage in New York. July has higher ridership than January in both 2020 and 2024, indicating people are not using citi bikes as frequently during winter.
 
@@ -433,7 +439,9 @@ citi_rides_full %>%
 
 ```
 
-Based on the data, it appears that Pier 61 at Chelsea Piers was the most popular starting point for Citi Bike users in July 2024
+Based on the data, it appears that Pier 61 at Chelsea Piers was the most popular starting point for Citi Bike users in July 2024.
+
+## Median Citi Bike Ride Duration by Day of Week, Month, and Year
 
 ```{r problem3_medianride_effects}
 
@@ -464,11 +472,11 @@ citi_rides_full %>%
 
 ```
 
-## Median Citi Bike Ride Duration by Day of Week, Month, and Year
-
 In January, median ride durations are consistently shorter compared to July for both 2020 and 2024, likely due to the colder weather discouraging longer rides. There is a noticeable weekend effect in both months, with Saturday and Sunday showing longer median ride durations in both 2020 and 2024, which suggests people may have longer rides for recreational purposes.
 
 Interestingly, ride durations in 2024 are generally shorter than in 2020 across all days and both months, which may be influenced by the impact of the COVID-19 pandemic in 2020. People may have utilised citi bikes for longer rides as an alternative to public transport or as a form of exercise when other options were limited. The difference between weekday and weekend ride durations is more pronounced in July than in January, which may be influenced by better weather conditions encouraging longer recreational rides in the summer.
+
+## Effects of month, membership status, and bike type on Citi Bike ride duration
 
 ```{r problem3_rideduration}
 
@@ -501,8 +509,6 @@ citi_rides_full %>%
     strip.background = element_blank())
 
 ```
-
-## Effects of month, membership status, and bike type on Citi Bike ride duration
 
 Considering the impact of membership status, it appears as though that casual riders generally have longer ride durations compared to members. This is evident from the higher median lines and larger interquartile ranges in the boxplots for casual riders, across both January and July as well as bike types. This suggests that casual riders may tend to use citi bikes for recreation or tourism, while members could be using them for shorter, more routine commuter trips.
 
